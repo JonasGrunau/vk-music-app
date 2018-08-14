@@ -2,6 +2,7 @@ import React from "react";
 import {View, StyleSheet, Text, Image, TouchableNativeFeedback} from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {theme} from "../../theme";
+import {Player} from "react-native-audio-toolkit";
 
 const styles = StyleSheet.create({
     root: {
@@ -31,12 +32,12 @@ const styles = StyleSheet.create({
         opacity: theme.opacityLight
     },
     genericCover: {
-        flex: 1,
+        padding: "50%",
         backgroundColor: "red"
     }
 });
 
-export default class PlayerScreen extends React.Component {
+export default class PlayerScreen extends React.PureComponent {
     static navigationOptions = {
         title: "Player",
         headerStyle: {
@@ -48,6 +49,35 @@ export default class PlayerScreen extends React.Component {
         },
     };
 
+    constructor(props) {
+        super(props);
+
+        const {navigation} = props;
+        const songData = navigation.getParam("songData", {id: 0, title: "fallback"});
+
+        this.fetchAudioUrl(songData);
+
+        this.state = {
+            title: songData[3],
+            artist: songData[4],
+            cover: songData[14].split(",")[1],
+            player: null
+        };
+    }
+
+    fetchAudioUrl = audio => {
+        fetch("http://92.42.47.38/url/?audio=" + JSON.stringify(audio))
+            .then(response => response.json())
+            .then(response => this.prepareAudio(response.payload))
+            .catch(error => console.error(error));
+    };
+
+    prepareAudio = url => {
+        console.log(url);
+        const player = new Player(url);
+        player.prepare(() => console.log("player ready"));
+    };
+
     handleOnPressPrevious = event => {
         // TODO implement
     };
@@ -56,18 +86,12 @@ export default class PlayerScreen extends React.Component {
         // TODO implement
     };
 
-    handleOnPressPlayPause = event => {
-        // TODO implement
+    handleOnPressPlayPause = () => {
+        this.state.player.playPause();
     };
 
     render() {
-        const {navigation} = this.props;
-        const songData = navigation.getParam("songData", {id: 0, title: "fallback"});
-
-        console.log(songData);
-        const title = songData[3];
-        const artist = songData[4];
-        const cover = songData[14];
+        const {title, artist, cover} = this.state;
 
         return (
             <View style={styles.root}>

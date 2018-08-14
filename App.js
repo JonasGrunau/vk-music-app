@@ -3,7 +3,7 @@ import {createStackNavigator} from "react-navigation";
 import LibraryScreen from "./App/Screens/Library/LibraryScreen";
 import PlayerScreen from "./App/Screens/Player/PlayerScreen";
 
-export default class App extends React.Component {
+export default class App extends React.PureComponent {
     render() {
         return <RootStack/>;
     }
