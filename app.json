@@ -1,4 +1,7 @@
 {
   "name": "vk-music-app",
-  "displayName": "vk-music-app"
+  "displayName": "vk-music-app",
+  "expo": {
+    "sdkVersion": "27.0.0"
+  }
 }
